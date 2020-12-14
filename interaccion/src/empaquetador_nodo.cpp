@@ -9,7 +9,7 @@ using namespace std;
 struct {
     string nombre;
     int edad;
-    //string idiomas[];
+    std::vector<std::string> idiomas;
 } infPersonal;
 
 
@@ -26,7 +26,7 @@ ros::Publisher publicadorEmpaquetador;
 void funcionCallback(const interaccion::inf_personal_usuario::ConstPtr& msg){
  ROS_INFO("He recibido un mensaje de test con el nombre: %s", msg->nombre.c_str());
  ROS_INFO("He recibido un mensaje de test con la edad: %d", msg->edad);
- for (int i = 0; i < 2; i++) {
+ for (int i = 0; i < msg->idiomas.size(); i++) {
    ROS_INFO("He recibido un mensaje de test con los idiomas: %s", msg->idiomas[i].c_str());
  }
 
@@ -36,6 +36,8 @@ void funcionCallback(const interaccion::inf_personal_usuario::ConstPtr& msg){
  interaccion::usuario mensajeEmpaquetador;
 
  mensajeEmpaquetador.infPersonal.edad = msg->edad;
+ mensajeEmpaquetador.infPersonal.nombre = msg->nombre;
+ mensajeEmpaquetador.infPersonal.idiomas = msg->idiomas;
 
  publicadorEmpaquetador.publish(mensajeEmpaquetador);
 

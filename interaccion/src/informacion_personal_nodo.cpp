@@ -24,8 +24,8 @@ int main(int argc, char **argv) {
     //ejecuta constantemente hasta recibir un Ctr+C
     int contador = 0;
     while (ros::ok()){
-        //int num_idiomas = 0;
-        //string[] idiomas0 = {};
+        int num_idiomas = 0;
+        std::vector<std::string> idiomas_array;
 
         //instanciamos un mensaje que queremos enviar
         interaccion::inf_personal_usuario mensajeAEnviar;
@@ -35,17 +35,18 @@ int main(int argc, char **argv) {
         cin>>mensajeAEnviar.nombre;
         cout<< "Por favor, ingrese la edad: "<<"\n";
         cin>>mensajeAEnviar.edad;
-        /*
+
 	cout<<"Introduzca el numero de idiomas que sepa: "<<"\n";
         cin>>num_idiomas;
+        string idioma[num_idiomas];
+
         for (int i = 0; i < num_idiomas; i++) {
           cout<< "Por favor, ingrese el idioma "<< i <<": "<<"\n";
-          cin>>idiomas0[i];
+          cin>>idioma[i];
+          idiomas_array.push_back(idioma[i]);
         }
 
-        cout<< "Los idiomas registrados son: "<< idiomas0 <<"\n";
-	*/
-        mensajeAEnviar.idiomas = {"ingles", "espanyol"};
+        mensajeAEnviar.idiomas = idiomas_array;
 
 
         //se publica el mensaje
