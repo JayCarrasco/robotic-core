@@ -13,6 +13,7 @@ void funcionCallback(const interaccion::usuario::ConstPtr& msg){
  for (int i = 0; i < msg->infPersonal.idiomas.size(); i++) {
    ROS_INFO("He recibido un mensaje de test con los idiomas: %s", msg->infPersonal.idiomas[i].c_str());
  }
+ ROS_INFO("He recibido un mensaje de test con la emocion: %s", msg->emocion.c_str());
 }
 int main(int argc, char **argv){
  //registra el nombre del nodo: nodo_receptor

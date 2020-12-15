@@ -1,6 +1,7 @@
 #include "ros/ros.h"
 #include "interaccion/inf_personal_usuario.h"
 #include "interaccion/usuario.h"
+#include "std_msgs/String.h"
 #include <string>
 
 using namespace std;
@@ -23,6 +24,9 @@ struct {
 
 ros::Publisher publicadorEmpaquetador;
 
+//instanciamos un mensaje que queremos enviar
+interaccion::usuario mensajeEmpaquetador;
+
 void funcionCallback(const interaccion::inf_personal_usuario::ConstPtr& msg){
  ROS_INFO("He recibido un mensaje de test con el nombre: %s", msg->nombre.c_str());
  ROS_INFO("He recibido un mensaje de test con la edad: %d", msg->edad);
@@ -30,17 +34,20 @@ void funcionCallback(const interaccion::inf_personal_usuario::ConstPtr& msg){
    ROS_INFO("He recibido un mensaje de test con los idiomas: %s", msg->idiomas[i].c_str());
  }
 
- //se publica el mensaje
-
- //instanciamos un mensaje que queremos enviar
- interaccion::usuario mensajeEmpaquetador;
-
  mensajeEmpaquetador.infPersonal.edad = msg->edad;
  mensajeEmpaquetador.infPersonal.nombre = msg->nombre;
  mensajeEmpaquetador.infPersonal.idiomas = msg->idiomas;
 
  publicadorEmpaquetador.publish(mensajeEmpaquetador);
 
+}
+
+void funcionCallback2(const std_msgs::String::ConstPtr& msg){
+ ROS_INFO("He recibido un mensaje con la emocion: %s", msg->data.c_str());
+
+ mensajeEmpaquetador.emocion = msg->data.c_str();
+
+ publicadorEmpaquetador.publish(mensajeEmpaquetador);
 }
 
 int main(int argc, char **argv){
@@ -59,8 +66,12 @@ int main(int argc, char **argv){
  //si recibimos el mensaje cuyo topic es: "inf_pers_topic" llamamos a la función manejadora: funcionCallback
  ros::Subscriber subscriptor = empaquetadorNodo.subscribe("inf_pers_topic", 0, funcionCallback);
 
+ //si recibimos el mensaje cuyo topic es: "emocion_topic" llamamos a la función manejadora functionCallback2
+ ros::Subscriber subscriptor2 = empaquetadorNodo.subscribe("emocion_topic", 0, funcionCallback2);
+
+
  //tiempo a dormir en cada iteracción
- ros::Duration seconds_sleep(1);
+ //ros::Duration seconds_sleep(1);
 
  /** Loop infinito para que no finalice la ejecución del nodo y siempre se pueda llamar al callback */
  ros::spin();

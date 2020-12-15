@@ -1,1 +1,2 @@
 inf_personal_usuario infPersonal
+string emocion

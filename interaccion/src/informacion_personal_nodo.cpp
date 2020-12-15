@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     ros::Duration seconds_sleep(1);
 
     //ejecuta constantemente hasta recibir un Ctr+C
-    int contador = 0;
+    //int contador = 0;
     while (ros::ok()){
         int num_idiomas = 0;
         std::vector<std::string> idiomas_array;
