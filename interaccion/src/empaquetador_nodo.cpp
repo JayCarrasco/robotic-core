@@ -13,7 +13,8 @@ struct {
     std::vector<std::string> idiomas;
 } infPersonal;
 
-
+bool confirmacionInfPersonal = false;
+bool confirmacionEmocion = false;
 /**
  * Se implementa un nodo que espera recibir mensajes cuyo topic es "inf_pers_topic" del tipo interaccion::inf_personal_usuario.
  * Muestra en pantalla este mensaje recibido
@@ -34,20 +35,25 @@ void funcionCallback(const interaccion::inf_personal_usuario::ConstPtr& msg){
    ROS_INFO("He recibido un mensaje de test con los idiomas: %s", msg->idiomas[i].c_str());
  }
 
+ confirmacionInfPersonal = true;
+ ROS_INFO("confirmo info personal: %d", confirmacionInfPersonal);
  mensajeEmpaquetador.infPersonal.edad = msg->edad;
  mensajeEmpaquetador.infPersonal.nombre = msg->nombre;
  mensajeEmpaquetador.infPersonal.idiomas = msg->idiomas;
 
- publicadorEmpaquetador.publish(mensajeEmpaquetador);
+ //publicadorEmpaquetador.publish(mensajeEmpaquetador);
 
 }
 
 void funcionCallback2(const std_msgs::String::ConstPtr& msg){
  ROS_INFO("He recibido un mensaje con la emocion: %s", msg->data.c_str());
 
+ confirmacionEmocion = true;
+ ROS_INFO("confirmo info emocion: %d", confirmacionEmocion);
+
  mensajeEmpaquetador.emocion = msg->data.c_str();
 
- publicadorEmpaquetador.publish(mensajeEmpaquetador);
+ //publicadorEmpaquetador.publish(mensajeEmpaquetador);
 }
 
 int main(int argc, char **argv){
@@ -69,11 +75,20 @@ int main(int argc, char **argv){
  //si recibimos el mensaje cuyo topic es: "emocion_topic" llamamos a la función manejadora functionCallback2
  ros::Subscriber subscriptor2 = empaquetadorNodo.subscribe("emocion_topic", 0, funcionCallback2);
 
+ while (ros::ok()){
+    if (confirmacionEmocion == true and confirmacionInfPersonal == true)
+     {
+        publicadorEmpaquetador.publish(mensajeEmpaquetador);
+        confirmacionEmocion = false;
+        confirmacionInfPersonal = false;
+    }
+    ros::spinOnce();
+ }
+ // Loop infinito para que no finalice la ejecución del nodo y siempre se pueda llamar al callback
+
 
  //tiempo a dormir en cada iteracción
  //ros::Duration seconds_sleep(1);
 
- /** Loop infinito para que no finalice la ejecución del nodo y siempre se pueda llamar al callback */
- ros::spin();
- return 0;
+
 }
