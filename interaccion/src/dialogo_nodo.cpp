@@ -14,7 +14,11 @@ void funcionCallback(const interaccion::usuario::ConstPtr& msg){
    ROS_INFO("He recibido un mensaje de test con los idiomas: %s", msg->infPersonal.idiomas[i].c_str());
  }
  ROS_INFO("He recibido un mensaje de test con la emocion: %s", msg->emocion.c_str());
+ ROS_INFO("He recibido un mensaje de test con la posicion en x: %d", msg->posicion.x);
+ ROS_INFO("He recibido un mensaje de test con la posicion en y: %d", msg->posicion.y);
+ ROS_INFO("He recibido un mensaje de test con la posicion en z: %d", msg->posicion.z);
 }
+
 int main(int argc, char **argv){
  //registra el nombre del nodo: nodo_receptor
  ros::init(argc, argv, "dialogo_nodo");

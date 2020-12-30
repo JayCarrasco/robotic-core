@@ -13,8 +13,18 @@ struct {
     std::vector<std::string> idiomas;
 } infPersonal;
 
+
+//Estructura para la posicion
+struct {
+    int x;
+    int y;
+    int z;
+} posicion;
+
 bool confirmacionInfPersonal = false;
 bool confirmacionEmocion = false;
+bool confirmacionPosicion = false;
+
 /**
  * Se implementa un nodo que espera recibir mensajes cuyo topic es "inf_pers_topic" del tipo interaccion::inf_personal_usuario.
  * Muestra en pantalla este mensaje recibido
@@ -56,6 +66,20 @@ void funcionCallback2(const std_msgs::String::ConstPtr& msg){
  //publicadorEmpaquetador.publish(mensajeEmpaquetador);
 }
 
+void funcionCallback3(const interaccion::pos_usuario::ConstPtr& msg){
+ ROS_INFO("He recibido un mensaje con la posicion en x: %d", msg->x);
+ ROS_INFO("He recibido un mensaje con la posicion en y: %d", msg->y);
+ ROS_INFO("He recibido un mensaje con la posicion en z: %d", msg->z);
+
+ confirmacionPosicion = true;
+ ROS_INFO("confirmo info posicion: %d", confirmacionPosicion);
+
+ mensajeEmpaquetador.posicion.x = msg->x;
+ mensajeEmpaquetador.posicion.y = msg->y;
+ mensajeEmpaquetador.posicion.z = msg->z;
+
+}
+
 int main(int argc, char **argv){
 
  //registra el nombre del nodo: empaquetador_nodo
@@ -75,12 +99,16 @@ int main(int argc, char **argv){
  //si recibimos el mensaje cuyo topic es: "emocion_topic" llamamos a la función manejadora functionCallback2
  ros::Subscriber subscriptor2 = empaquetadorNodo.subscribe("emocion_topic", 0, funcionCallback2);
 
+ //si recibimos el mensaje cuyo topic es: "pos_usuario_topic" llamamos a la función manejadora functionCallback3
+ ros::Subscriber subscriptor3 = empaquetadorNodo.subscribe("pos_usuario_topic", 0, funcionCallback3);
+
  while (ros::ok()){
-    if (confirmacionEmocion == true and confirmacionInfPersonal == true)
+    if (confirmacionEmocion == true and confirmacionInfPersonal == true and confirmacionPosicion == true)
      {
         publicadorEmpaquetador.publish(mensajeEmpaquetador);
         confirmacionEmocion = false;
         confirmacionInfPersonal = false;
+        confirmacionPosicion = false;
     }
     ros::spinOnce();
  }

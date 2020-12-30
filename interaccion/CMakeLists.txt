@@ -52,6 +52,7 @@ add_message_files(
   FILES
   inf_personal_usuario.msg
   usuario.msg
+  pos_usuario.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -138,6 +139,7 @@ add_executable(informacion_personal_nodo src/informacion_personal_nodo.cpp)
 add_executable(empaquetador_nodo src/empaquetador_nodo.cpp)
 add_executable(dialogo_nodo src/dialogo_nodo.cpp)
 add_executable(emocion_usuario_nodo src/emocion_usuario_nodo.cpp)
+add_executable(posicion_usuario_nodo src/posicion_usuario_nodo.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -171,6 +173,12 @@ target_link_libraries(dialogo_nodo
 )
 
 target_link_libraries(emocion_usuario_nodo
+
+  ${catkin_LIBRARIES}
+
+)
+
+target_link_libraries(posicion_usuario_nodo
 
   ${catkin_LIBRARIES}
 

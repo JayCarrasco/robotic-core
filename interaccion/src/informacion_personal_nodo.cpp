@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
         cout<< "Por favor, ingrese la edad: "<<"\n";
         cin>>mensajeAEnviar.edad;
 
-	cout<<"Introduzca el numero de idiomas que sepa: "<<"\n";
+	    cout<<"Introduzca el numero de idiomas que sepa: "<<"\n";
         cin>>num_idiomas;
         string idioma[num_idiomas];
 
