@@ -1,0 +1,8 @@
+<launch>
+  <node name="informacion_personal_nodo" pkg="interaccion" type="informacion_personal_nodo" respawn="true" output="screen" launch-prefix="xterm -e" />
+  <node name="emocion_usuario_nodo" pkg="interaccion" type="emocion_usuario_nodo" respawn="true" output="screen" launch-prefix="xterm -e" />
+  <node name="posicion_usuario_nodo" pkg="interaccion" type="posicion_usuario_nodo" respawn="true" output="screen" launch-prefix="xterm -e" />
+  <node name="empaquetador_nodo" pkg="interaccion" type="empaquetador_nodo" respawn="true" output="screen" launch-prefix="xterm -e" />
+  <node name="dialogo_nodo" pkg="interaccion" type="dialogo_nodo" respawn="true" output="screen" launch-prefix="xterm -e" />
+  <node name="multiplicador_nodo" pkg="interaccion" type="multiplicador_nodo" respawn="true" output="screen" launch-prefix="xterm -e" />
+</launch>

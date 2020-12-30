@@ -1,9 +1,18 @@
 #include "ros/ros.h"
 #include "interaccion/usuario.h"
+#include "interaccion/multiplicador.h"
+
 /**
  * Se implementa un nodo que espera recibir mensajes cuyo topic es "user_topic" del tipo interaccion::usuario.
  * Muestra en pantalla este mensaje recibido
  */
+
+
+//Se crean srv y client como variables globales
+ interaccion::multiplicador srv;
+ ros::ServiceClient client;
+
+
 /**
 * Esta función muestra por pantalla el mensaje recibido desde el nodo empaquetador
 */
@@ -17,6 +26,13 @@ void funcionCallback(const interaccion::usuario::ConstPtr& msg){
  ROS_INFO("He recibido un mensaje de test con la posicion en x: %d", msg->posicion.x);
  ROS_INFO("He recibido un mensaje de test con la posicion en y: %d", msg->posicion.y);
  ROS_INFO("He recibido un mensaje de test con la posicion en z: %d", msg->posicion.z);
+
+  srv.request.entrada = msg->infPersonal.edad; //Se quiere multiplicar la edad
+ if (client.call(srv)){
+   ROS_INFO("Respuesta del servicio: %d", (int)srv.response.resultado);
+ }else{
+   ROS_ERROR("Fallo al llamar al servicio: nombre_servicio");
+ }
 }
 
 int main(int argc, char **argv){
@@ -27,6 +43,9 @@ int main(int argc, char **argv){
 
  //si recibimos el mensaje cuyo topic es: "mensajeTest_topic" llamamos a la función manejadora: funcionCallback
  ros::Subscriber subscriptorDialogo = nodoDialogo.subscribe("user_topic", 0, funcionCallback);
+
+  //vamos a invocar el servicio llamado Multiplicador
+ client = nodoDialogo.serviceClient<interaccion::multiplicador>("multiplicador");
 
  /** Loop infinito para que no finalice la ejecución del nodo y siempre se pueda llamar al callback */
  ros::spin();
