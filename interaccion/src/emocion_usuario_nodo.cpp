@@ -39,4 +39,5 @@ int main(int argc, char **argv)
         ROS_DEBUG("Se duerme el nodo emisor un segundo");
         seconds_sleep.sleep();
     }
+    return 0;
 }

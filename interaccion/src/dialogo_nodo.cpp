@@ -1,12 +1,20 @@
 #include "ros/ros.h"
 #include "interaccion/usuario.h"
 #include "interaccion/multiplicador.h"
+#include "std_msgs/String.h"
+#include <string>
 
 /**
  * Se implementa un nodo que espera recibir mensajes cuyo topic es "user_topic" del tipo interaccion::usuario.
  * Muestra en pantalla este mensaje recibido
  */
 
+//Muestra que le han llegado todos los datos
+bool confirmarStart = false;
+bool confirmarReset = false;
+
+//Se pone a true tras enviar el primer mensaje
+bool starting = false;
 
 //Se crean srv y client como variables globales
  interaccion::multiplicador srv;
@@ -33,6 +41,13 @@ void funcionCallback(const interaccion::usuario::ConstPtr& msg){
  }else{
    ROS_ERROR("Fallo al llamar al servicio: nombre_servicio");
  }
+
+ if (starting == false) {
+ 	confirmarStart = true;
+ } else {
+ 	confirmarReset = true;
+ }
+
 }
 
 int main(int argc, char **argv){
@@ -47,7 +62,38 @@ int main(int argc, char **argv){
   //vamos a invocar el servicio llamado Multiplicador
  client = nodoDialogo.serviceClient<interaccion::multiplicador>("multiplicador");
 
+ //Se publica el mensaje start
+ ros::Publisher relojStart = nodoDialogo.advertise<std_msgs::String>("start_topic",0);
+
+  //Se publica el mensaje reset
+ ros::Publisher relojReset = nodoDialogo.advertise<std_msgs::String>("reset_topic",0);
+ 
+ while (ros::ok()){
+	 if (confirmarStart == true){
+	 	std_msgs::String mensajeStart;
+	 	std::string start = "start";
+	 	mensajeStart.data = start;
+
+	 	relojStart.publish(mensajeStart);
+
+	 	confirmarStart = false;
+	 	starting = true;
+	 }
+
+ 	 if (confirmarReset == true){
+ 		std_msgs::String mensajeReset;
+ 		std::string reset = "reset";
+ 		mensajeReset.data = reset;
+
+ 		relojReset.publish(mensajeReset);
+
+  		confirmarReset = false;
+	 }
+
+	 ros::spinOnce();
+	}
+
  /** Loop infinito para que no finalice la ejecución del nodo y siempre se pueda llamar al callback */
- ros::spin();
+ //ros::spin();
  return 0;
 }
