@@ -2,6 +2,7 @@
 #include "interaccion/usuario.h"
 #include "interaccion/multiplicador.h"
 #include "std_msgs/String.h"
+#include "std_msgs/Bool.h"
 #include <string>
 
 /**
@@ -50,6 +51,10 @@ void funcionCallback(const interaccion::usuario::ConstPtr& msg){
 
 }
 
+void functionCallback2(const std_msgs::Bool::ConstPtr& msg){
+	ROS_INFO("He recibido un mensaje con la info %s", msg ? "true" : "false");
+}
+
 int main(int argc, char **argv){
  //registra el nombre del nodo: nodo_receptor
  ros::init(argc, argv, "dialogo_nodo");
@@ -58,6 +63,8 @@ int main(int argc, char **argv){
 
  //si recibimos el mensaje cuyo topic es: "mensajeTest_topic" llamamos a la función manejadora: funcionCallback
  ros::Subscriber subscriptorDialogo = nodoDialogo.subscribe("user_topic", 0, funcionCallback);
+
+ ros::Subscriber subscriptorReloj = nodoDialogo.subscribe("still_alive", 0, functionCallback2);
 
   //vamos a invocar el servicio llamado Multiplicador
  client = nodoDialogo.serviceClient<interaccion::multiplicador>("multiplicador");

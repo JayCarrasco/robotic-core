@@ -5,4 +5,6 @@
   <node name="empaquetador_nodo" pkg="interaccion" type="empaquetador_nodo" respawn="true" output="screen" launch-prefix="xterm -e" />
   <node name="dialogo_nodo" pkg="interaccion" type="dialogo_nodo" respawn="true" output="screen" launch-prefix="xterm -e" />
   <node name="multiplicador_nodo" pkg="interaccion" type="multiplicador_nodo" respawn="true" output="screen" launch-prefix="xterm -e" />
+  <node name="reloj_nodo" pkg="interaccion" type="reloj_nodo" respawn="true" output="screen" launch-prefix="xterm -e" />
+
 </launch>
