@@ -17,10 +17,22 @@ bool confirmarReset = false;
 //Se pone a true tras enviar el primer mensaje
 bool starting = false;
 
-//Se crean srv y client como variables globales
- interaccion::multiplicador srv;
- ros::ServiceClient client;
+//Declaracion de las variables de comando de voz
+std::string text;
+std::string command;
 
+//Se crean srv y client como variables globales
+interaccion::multiplicador srv;
+ros::ServiceClient client;
+
+//Informacion a sintetizar por voz
+std::string name;
+std::string age;
+std::string emotion;
+std::string xposition;
+std::string yposition;
+std::string zposition;
+std::string language;
 
 /**
 * Esta función muestra por pantalla el mensaje recibido desde el nodo empaquetador
@@ -41,6 +53,29 @@ void funcionCallback(const interaccion::usuario::ConstPtr& msg){
    ROS_INFO("Respuesta del servicio: %d", (int)srv.response.resultado);
  }else{
    ROS_ERROR("Fallo al llamar al servicio: nombre_servicio");
+ }
+
+ name = msg->infPersonal.nombre.c_str();
+ age = std::to_string(msg->infPersonal.edad);
+ emotion = msg->emocion.c_str();
+ xposition = std::to_string(msg->posicion.x);
+ yposition = std::to_string(msg->posicion.y);
+ zposition = std::to_string(msg->posicion.z);
+
+
+ command = "espeak -v es \"" "Mi nombre es "+name+"y tengo"+age+"anyos. Mi estado de animo es"+emotion+" \"";
+ system(command.c_str());
+ 
+ command = "espeak -v es \"" "Mi posicion en coordenadas cartesinas es "+xposition+" "+yposition+" "+zposition+" \"";
+ system(command.c_str());
+
+ command = "espeak -v es \"" "Además, hablo los siguientes idiomas" " \"";
+ system(command.c_str());
+
+ for (int i = 0; i < msg->infPersonal.idiomas.size(); i++) {
+   language = msg->infPersonal.idiomas[i].c_str();
+   command = "espeak -v es \"" +language+ " \"";
+   system(command.c_str());
  }
 
  if (starting == false) {
