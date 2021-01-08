@@ -197,6 +197,12 @@ target_link_libraries(reloj_nodo
 
 )
 
+
+catkin_install_python(PROGRAMS
+   src/posicion_usuario_nodo.py
+   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
+
 #############
 ## Install ##
 #############
@@ -251,3 +257,5 @@ target_link_libraries(reloj_nodo
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+

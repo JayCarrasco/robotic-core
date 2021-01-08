@@ -1,11 +1,13 @@
+//Se incluyen las cabeceras
 #include "ros/ros.h"
 #include "interaccion/multiplicador.h"
 
 /** Funcion ofertada: multiplicador */
 bool multiplicador(interaccion::multiplicador::Request &req, interaccion::multiplicador::Response &res){
-
+ 
+ //Se multiplica el resultado por 2, y se muestra la peticion y la respuesta
  res.resultado = req.entrada * 2;
- ROS_INFO("Petición: x = %d", (int)req.entrada);
+ ROS_INFO("Peticion: x = %d", (int)req.entrada);
  ROS_INFO("Respuesta: %d", (int)res.resultado);
  return true;
 }

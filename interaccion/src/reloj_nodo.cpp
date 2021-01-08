@@ -1,3 +1,8 @@
+/*Este nodo llamado reloj_nodo muestra la hora UTC, el tiempo transcurrido desde
+el ultimo mensaje y envia una señal al dialogo_nodo confirmandole que sigue "vivo"
+*/
+
+//Se incluyen las cabeceras
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Bool.h"
@@ -14,18 +19,15 @@ using namespace boost::posix_time;
 using namespace ros;
 using namespace std;
 
-//Declaracion de variables
+//Declaracion de variables globales
 Time startTime;
 bool clock_start = false;
 int totalSeconds = 0;
 
 Publisher publicadorTiempo; //Publicador de mensajes que envía still_alive
 
-/*Se implementa un nodo que se subscriba a los topics start_topic y reset_topic*/
-
-
 /**
-* Esta función muestra por pantalla el mensaje recibido desde el nodo dialogo
+* Esta función confirma el start recibido desde el nodo_dialogo
 */
 void funcionCallback(const std_msgs::String::ConstPtr& msg){
  ROS_INFO("He recibido un mensaje con la informacion: %s", msg->data.c_str());
@@ -33,6 +35,7 @@ void funcionCallback(const std_msgs::String::ConstPtr& msg){
  clock_start = true;
 }
 
+//Esta funcion confirma el reset recibido desde el dialogo nodo
 void funcionCallback2(const std_msgs::String::ConstPtr& msg){
  ROS_INFO("He recibido un mensaje con la informacion: %s", msg->data.c_str());
  startTime = Time::now();
@@ -62,6 +65,7 @@ void printClock() {
 	ROS_INFO("SECONDS FROM START/RESET: %lf", (double)(Time::now()-startTime).toSec());
 }
 
+//funcion principal
 int main(int argc, char **argv){
  //registra el nombre del nodo: reloj_nodo
  ros::init(argc, argv, "reloj_nodo");
@@ -80,10 +84,11 @@ int main(int argc, char **argv){
  //Publicador de mensajes para indicar que el nodo sigue activo
  publicadorTiempo = nodoReloj.advertise<std_msgs::Bool>(RELOJ_MSG_NAME,0);
 
- //Rate indica la frecuencia con la que se ejecuta el bucle principal
+ //Frecuencia con la que se ejecuta el bucle principal
  ros::Duration seconds_sleep(3);
 
   while (ros::ok()){
+    //Cuando se envie el primer mensaje, se comienza a llamar a printclock
   	if(clock_start){
   		printClock();
     }

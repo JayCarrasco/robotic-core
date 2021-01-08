@@ -1,22 +1,25 @@
+/**
+* Este nodo llamado posicion_usuario_nodo emite mensajes "pos_usuario_topic"
+del tipo interaccion::pos_usuario
+*/
+
+//Se declaran cabeceras y namespaces
 #include "ros/ros.h"
 #include "interaccion/pos_usuario.h"
 
 using namespace std;
 
-/**
-* Este nodo llamado informacion_personal_nodo emite mensajes "inf_pers_topic"
-del tipo interaccion::pos_usuario
-*/
-
+//funcion principal
 int main(int argc, char **argv)
-{
+{   
+    //Se crea el nodo con el handle
     ros::init(argc, argv, "posicion_usuario_nodo");
     ros::NodeHandle nodoPosicionUsuario;
 
     //Se crea un objeto tipo nodo
     ROS_INFO("posicion_usuario_nodo creado y registrado");
 
-    //Es necesario advertir el tipo de mensaje a enviar y como le hemos llamado (el topic)
+    //Es necesario advertir el tipo de mensaje a enviar, que tiene el topic pos_usuario_topic
     ros::Publisher publicadorPosicion = nodoPosicionUsuario.advertise<interaccion::pos_usuario>("pos_usuario_topic", 0);
 
     ros::Duration seconds_sleep(1);
@@ -27,7 +30,7 @@ int main(int argc, char **argv)
         //instanciamos un mensaje que queremos enviar
         interaccion::pos_usuario mensajePosicion;
 
-        //en el mensaje enviamos el número de veces que se ha iterado en este bucle
+        //Se introduce las posiciones en coordenadas cartesianas
         cout<< "Por favor, ingrese la posicion en x: "<<"\n";
         cin>>mensajePosicion.x;
         cout<< "Por favor, ingrese la posicion en y: "<<"\n";

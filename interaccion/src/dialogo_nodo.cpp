@@ -1,3 +1,4 @@
+//Se introducen las cabeceras
 #include "ros/ros.h"
 #include "interaccion/usuario.h"
 #include "interaccion/multiplicador.h"
@@ -37,32 +38,33 @@ std::string language;
 /**
 * Esta función muestra por pantalla el mensaje recibido desde el nodo empaquetador
 */
-void funcionCallback(const interaccion::usuario::ConstPtr& msg){
- ROS_INFO("He recibido un mensaje de test con el nombre: %s", msg->infPersonal.nombre.c_str());;
- ROS_INFO("He recibido un mensaje de test con la edad: %d", msg->infPersonal.edad);
+void functionCallback(const interaccion::usuario::ConstPtr& msg){
+ ROS_INFO("El nombre es: %s", msg->infPersonal.nombre.c_str());;
+ ROS_INFO("La edad es: %d", msg->infPersonal.edad);
  for (int i = 0; i < msg->infPersonal.idiomas.size(); i++) {
-   ROS_INFO("He recibido un mensaje de test con los idiomas: %s", msg->infPersonal.idiomas[i].c_str());
+   ROS_INFO("Los idiomas que se son: %s", msg->infPersonal.idiomas[i].c_str());
  }
- ROS_INFO("He recibido un mensaje de test con la emocion: %s", msg->emocion.c_str());
- ROS_INFO("He recibido un mensaje de test con la posicion en x: %d", msg->posicion.x);
- ROS_INFO("He recibido un mensaje de test con la posicion en y: %d", msg->posicion.y);
- ROS_INFO("He recibido un mensaje de test con la posicion en z: %d", msg->posicion.z);
+ ROS_INFO("La emocion es: %s", msg->emocion.c_str());
+ ROS_INFO("La posicion en x es: %d", msg->posicion.x);
+ ROS_INFO("La posicion en y es: %d", msg->posicion.y);
+ ROS_INFO("La posicion en z es: %d", msg->posicion.z);
 
-  srv.request.entrada = msg->infPersonal.edad; //Se quiere multiplicar la edad
+ srv.request.entrada = msg->infPersonal.edad; //Se quiere multiplicar la edad
  if (client.call(srv)){
-   ROS_INFO("Respuesta del servicio: %d", (int)srv.response.resultado);
+   ROS_INFO("La edad multiplicada por dos es: %d", (int)srv.response.resultado);
  }else{
-   ROS_ERROR("Fallo al llamar al servicio: nombre_servicio");
+   ROS_ERROR("Fallo al llamar al servicio: multiplicador.srv");
  }
-
+ 
+ //Sintetizador de voz
  name = msg->infPersonal.nombre.c_str();
  age = std::to_string(msg->infPersonal.edad);
  emotion = msg->emocion.c_str();
  xposition = std::to_string(msg->posicion.x);
  yposition = std::to_string(msg->posicion.y);
  zposition = std::to_string(msg->posicion.z);
-
-
+ 
+ //Los datos son sintetizados por voz de manera ordenada
  command = "espeak -v es \"" "Mi nombre es "+name+"y tengo"+age+"anyos. Mi estado de animo es"+emotion+" \"";
  system(command.c_str());
  
@@ -77,31 +79,37 @@ void funcionCallback(const interaccion::usuario::ConstPtr& msg){
    command = "espeak -v es \"" +language+ " \"";
    system(command.c_str());
  }
-
+ 
+ /*Cuando arranca el nodo, se confirma el start, a partir de ahí, se envía Reset
+ info para nodo reloj*/
  if (starting == false) {
  	confirmarStart = true;
  } else {
  	confirmarReset = true;
  }
-
 }
+
+/*Funcion que recibe la informacion still_alive del nodo reloj
+Si true, el nodo sigue vivo*/
 
 void functionCallback2(const std_msgs::Bool::ConstPtr& msg){
-	ROS_INFO("He recibido un mensaje con la info %s", msg ? "true" : "false");
+	ROS_INFO("El estado del nodo reloj es: %s", msg ? "true" : "false");
 }
 
+//Función principal
 int main(int argc, char **argv){
- //registra el nombre del nodo: nodo_receptor
+ //registra el nombre del nodo: dialogo_nodo y se crea el handle, denominado nodoDialogo
  ros::init(argc, argv, "dialogo_nodo");
  ros::NodeHandle nodoDialogo;
  ROS_INFO("dialogo_nodo creado y registrado"); //muestra en pantalla
 
- //si recibimos el mensaje cuyo topic es: "mensajeTest_topic" llamamos a la función manejadora: funcionCallback
- ros::Subscriber subscriptorDialogo = nodoDialogo.subscribe("user_topic", 0, funcionCallback);
-
+ //si se recibe el mensaje cuyo topic es: "user_topic" se llama a la función manejadora: functionCallback
+ ros::Subscriber subscriptorDialogo = nodoDialogo.subscribe("user_topic", 0, functionCallback);
+ 
+ //si se recibe el mensaje cuyo topic es: "still_alive" se llama a la función manejadora: funcionCallback2
  ros::Subscriber subscriptorReloj = nodoDialogo.subscribe("still_alive", 0, functionCallback2);
 
-  //vamos a invocar el servicio llamado Multiplicador
+  //Se invoca el servicio llamado Multiplicador
  client = nodoDialogo.serviceClient<interaccion::multiplicador>("multiplicador");
 
  //Se publica el mensaje start
@@ -111,6 +119,7 @@ int main(int argc, char **argv){
  ros::Publisher relojReset = nodoDialogo.advertise<std_msgs::String>("reset_topic",0);
  
  while (ros::ok()){
+ 	 //Cuando el nodo se ejecuta por primera vez, publica el mensaje start
 	 if (confirmarStart == true){
 	 	std_msgs::String mensajeStart;
 	 	std::string start = "start";
@@ -118,10 +127,12 @@ int main(int argc, char **argv){
 
 	 	relojStart.publish(mensajeStart);
 
+	 	//Una vez publicado, starting = true, indicando que a partir de ahora, se envía reset
 	 	confirmarStart = false;
 	 	starting = true;
 	 }
 
+	 //A partir de que el nodo se ha ejecutado por primera vez, publica el mensaje reset
  	 if (confirmarReset == true){
  		std_msgs::String mensajeReset;
  		std::string reset = "reset";
@@ -131,11 +142,8 @@ int main(int argc, char **argv){
 
   		confirmarReset = false;
 	 }
-
 	 ros::spinOnce();
 	}
 
- /** Loop infinito para que no finalice la ejecución del nodo y siempre se pueda llamar al callback */
- //ros::spin();
  return 0;
 }
