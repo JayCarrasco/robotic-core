@@ -85,7 +85,7 @@ int main(int argc, char **argv){
  publicadorTiempo = nodoReloj.advertise<std_msgs::Bool>(RELOJ_MSG_NAME,0);
 
  //Frecuencia con la que se ejecuta el bucle principal
- ros::Duration seconds_sleep(3);
+ ros::Duration seconds_sleep(1/3);
 
   while (ros::ok()){
     //Cuando se envie el primer mensaje, se comienza a llamar a printclock
